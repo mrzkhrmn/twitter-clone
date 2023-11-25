@@ -1,19 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { signInSuccess } from "../redux/user/userSlice";
 
 export const SignInPage = () => {
-  const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  console.log(currentUser);
 
   async function handleSubmit(e) {
     e.preventDefault();

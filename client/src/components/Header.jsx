@@ -1,7 +1,9 @@
 import { FaSearch, FaHome, FaUser } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export const Header = () => {
+  const { currentUser } = useSelector((state) => state.user);
   return (
     <header className="max-w-6xl  mx-auto">
       <div className="flex items-center justify-between p-3 border-b border-gray-600">
@@ -24,7 +26,8 @@ export const Header = () => {
             <FaHome /> <span>Home</span>
           </NavLink>
           <NavLink className="flex items-center gap-1">
-            <FaUser /> <span>Profile</span>
+            <FaUser />{" "}
+            <span>{currentUser ? currentUser.username : "Profile"}</span>
           </NavLink>
         </div>
       </div>
