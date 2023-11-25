@@ -51,7 +51,7 @@ export const SignInPage = () => {
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 my-4">
         <div className="flex flex-col gap-2">
           <input
-            type="text"
+            type="email"
             id="email"
             placeholder="Email..."
             className="border text-lg p-3 rounded-md w-full"

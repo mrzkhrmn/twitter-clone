@@ -56,7 +56,7 @@ export const SignUpPage = () => {
             required
           />
           <input
-            type="text"
+            type="email"
             id="email"
             placeholder="Email..."
             className="border text-lg p-3 rounded-md w-full"
