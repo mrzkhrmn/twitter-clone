@@ -51,7 +51,7 @@ export const SignUpPage = () => {
             type="text"
             id="username"
             placeholder="Username..."
-            className="border text-lg p-3 rounded-md w-full"
+            className="border text-lg p-3 rounded-md w-full bg-gray-800 focus:outline-none border-none"
             onChange={handleChange}
             required
           />
@@ -59,7 +59,7 @@ export const SignUpPage = () => {
             type="email"
             id="email"
             placeholder="Email..."
-            className="border text-lg p-3 rounded-md w-full"
+            className="border text-lg p-3 rounded-md w-full bg-gray-800 focus:outline-none border-none"
             onChange={handleChange}
             required
           />
@@ -67,20 +67,20 @@ export const SignUpPage = () => {
             type="password"
             id="password"
             placeholder="Password..."
-            className="border text-lg p-3 rounded-md w-full"
+            className="border text-lg p-3 rounded-md w-full bg-gray-800 focus:outline-none border-none"
             onChange={handleChange}
             required
           />
         </div>
         <button
           type="submit"
-          className="bg-slate-700 text-white p-3 text-lg rounded-md"
+          className="bg-blue-700 text-white p-3 text-lg rounded-md hover:opacity-80"
         >
           {laoding ? "Signing up.." : "Sign Up"}
         </button>
         <button
           type="button"
-          className="bg-red-700 text-white p-3 text-lg rounded-md flex items-center justify-center gap-2"
+          className="bg-red-700 text-white p-3 text-lg rounded-md flex items-center justify-center gap-2 hover:opacity-80"
         >
           <span>Sign up with</span>{" "}
           <span className="flex items-center">
@@ -89,7 +89,7 @@ export const SignUpPage = () => {
           </span>
         </button>
       </form>
-      <Link to={"/sign-in"} className="text-blue-700 text-lg hover:underline">
+      <Link to={"/sign-in"} className="text-blue-500 text-lg hover:underline ">
         <p>Already have an account?</p>
       </Link>
       <p className="text-red-600">{error && error}</p>
