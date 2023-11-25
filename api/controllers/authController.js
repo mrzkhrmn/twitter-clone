@@ -1,7 +1,6 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import express from "express";
 import { errorHandler } from "../utils/error.js";
 
 export const signUp = async (req, res, next) => {
@@ -12,7 +11,7 @@ export const signUp = async (req, res, next) => {
     await newUser.save();
     res.status(201).json("User created successfully!");
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
@@ -30,6 +29,6 @@ export const signIn = async (req, res, next) => {
       .status(200)
       .json(rest);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
