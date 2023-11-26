@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
-import { FaGoogle } from "react-icons/fa";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { signInSuccess } from "../redux/user/userSlice";
+import { OAuth } from "../components/OAuth";
 
 export const SignInPage = () => {
   const [formData, setFormData] = useState({});
@@ -80,16 +80,7 @@ export const SignInPage = () => {
         >
           {loading ? "Signing in..." : "Sign in"}
         </button>
-        <button
-          type="button"
-          className="bg-red-700 text-white p-3 text-lg rounded-md flex items-center justify-center gap-2 hover:opacity-80"
-        >
-          <span>Sign in with</span>{" "}
-          <span className="flex items-center">
-            <FaGoogle />
-            oogle
-          </span>
-        </button>
+        <OAuth />
       </form>
       <Link to={"/sign-up"} className="text-blue-500 text-lg hover:underline">
         <p>Dont have an account?</p>

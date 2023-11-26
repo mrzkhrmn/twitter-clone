@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
-import { FaGoogle } from "react-icons/fa";
 import { useState } from "react";
+import { OAuth } from "../components/OAuth";
 
 export const SignUpPage = () => {
   const [formData, setFormData] = useState({});
@@ -78,16 +78,7 @@ export const SignUpPage = () => {
         >
           {laoding ? "Signing up.." : "Sign Up"}
         </button>
-        <button
-          type="button"
-          className="bg-red-700 text-white p-3 text-lg rounded-md flex items-center justify-center gap-2 hover:opacity-80"
-        >
-          <span>Sign up with</span>{" "}
-          <span className="flex items-center">
-            <FaGoogle />
-            oogle
-          </span>
-        </button>
+        <OAuth />
       </form>
       <Link to={"/sign-in"} className="text-blue-500 text-lg hover:underline ">
         <p>Already have an account?</p>
