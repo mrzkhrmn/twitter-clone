@@ -6,3 +6,7 @@ body {
   background-color: black;
   color: white;
 }
+
+.active {
+  @apply shadow-lg shadow-inherit opacity-100 border-b border-blue-400;
+}
