@@ -1,4 +1,4 @@
-import { FaSearch, FaHome, FaUser } from "react-icons/fa";
+import { FaSearch, FaHome, FaUser, FaPen } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -22,10 +22,13 @@ export const Header = () => {
           </div>
         </form>
         <div className="flex gap-4 items-center text-xl">
-          <NavLink className="flex items-center gap-1">
+          <NavLink to={"/"} className="flex items-center gap-1">
             <FaHome /> <span>Home</span>
           </NavLink>
-          <NavLink className="flex items-center gap-1">
+          <NavLink to={"/about"} className="flex items-center gap-1">
+            <FaPen /> <span>About</span>
+          </NavLink>
+          <NavLink to={"/profile"} className="flex items-center gap-1">
             <FaUser />{" "}
             <span>{currentUser ? currentUser.username : "Profile"}</span>
           </NavLink>

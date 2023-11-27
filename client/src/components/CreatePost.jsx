@@ -1,14 +1,16 @@
 import { useRef } from "react";
 import { FaImage } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 export const CreatePost = () => {
+  const { currentUser } = useSelector((state) => state.user);
   const fileRef = useRef(null);
   return (
     <div className="flex justify-center gap-4 mt-8">
       <div>
         <img
-          className="w-12"
-          src="https://static.vecteezy.com/system/resources/previews/019/896/008/original/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png"
+          className="w-12 rounded-full object-cover"
+          src={currentUser.profileImage}
           alt="profile ia-mage"
         />
       </div>
