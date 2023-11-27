@@ -8,6 +8,8 @@ export const ProfilePage = () => {
   const [active, setActive] = useState("posts");
   const date = new Date(currentUser.createdAt);
 
+  console.log(currentUser);
+
   const getMonthToString = (month) => {
     switch (month) {
       case 1:
@@ -136,7 +138,6 @@ export const ProfilePage = () => {
           </button>
         </div>
       </div>
-      <div>Posts</div>
     </div>
   );
 };
