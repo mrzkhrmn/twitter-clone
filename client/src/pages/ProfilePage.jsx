@@ -1,14 +1,26 @@
-import { useSelector } from "react-redux";
-import { FaArrowLeft, FaCalendar } from "react-icons/fa";
-import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { Modal, Button } from "antd";
+import { FaArrowLeft, FaCalendar } from "react-icons/fa";
+import {
+  deleteUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  updateUserFailure,
+  updateUserStart,
+  updateUserSuccess,
+} from "../redux/user/userSlice";
+import { message } from "antd";
 
 export const ProfilePage = () => {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, loading, error } = useSelector((state) => state.user);
+  const [modalData, setModalData] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [active, setActive] = useState("posts");
-  const date = new Date(currentUser.createdAt);
+  const dispatch = useDispatch();
 
-  console.log(currentUser);
+  const date = new Date(currentUser.createdAt);
 
   const getMonthToString = (month) => {
     switch (month) {
@@ -41,6 +53,62 @@ export const ProfilePage = () => {
         break;
     }
   };
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  function handleChange(e) {
+    setModalData({ ...modalData, [e.target.id]: e.target.value });
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(modalData),
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(updateUserFailure(data.message));
+        return;
+      }
+      dispatch(updateUserSuccess(data));
+      handleCancel();
+      message.success("User updated successfully");
+    } catch (error) {
+      dispatch(updateUserFailure(error.message));
+    }
+  }
+
+  async function handleDeleteUser() {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data.message));
+      }
+      dispatch(deleteUserSuccess(data));
+      message.success("Your account has been deleted!");
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message));
+    }
+  }
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="flex border-x border-dark-gray gap-4">
@@ -64,7 +132,10 @@ export const ProfilePage = () => {
             className="rounded-full absolute -bottom-1.5 left-6 w-32 border-4 border-black"
           />
           <div className="flex justify-end p-3 text-lg font-semibold">
-            <button className="border border-slate-500 rounded-full py-1 px-5 hover:bg-white/10">
+            <button
+              onClick={showModal}
+              className="border border-slate-500 rounded-full py-1 px-5 hover:bg-white/10"
+            >
               Edit Profile
             </button>
           </div>
@@ -93,7 +164,7 @@ export const ProfilePage = () => {
         <div className="flex justify-center items-center">
           <button
             className={`py-6 px-11 opacity-70 hover:bg-white/10 transition duration-200 ${
-              active === "posts" ? "active" : ""
+              active === "posts" ? "activeBtn" : ""
             }`}
             id="posts"
             onClick={(e) => setActive(e.target.id)}
@@ -102,7 +173,7 @@ export const ProfilePage = () => {
           </button>
           <button
             className={`py-6 px-11 opacity-70 hover:bg-white/10 transition duration-200 ${
-              active === "replies" ? "active" : ""
+              active === "replies" ? "activeBtn" : ""
             }`}
             id="replies"
             onClick={(e) => setActive(e.target.id)}
@@ -111,7 +182,7 @@ export const ProfilePage = () => {
           </button>
           <button
             className={`py-6 px-11 opacity-70 hover:bg-white/10 transition duration-200 ${
-              active === "highlights" ? "active" : ""
+              active === "highlights" ? "activeBtn" : ""
             }`}
             id="highlights"
             onClick={(e) => setActive(e.target.id)}
@@ -120,7 +191,7 @@ export const ProfilePage = () => {
           </button>
           <button
             className={`py-6 px-11 opacity-70 hover:bg-white/10 transition duration-200 ${
-              active === "media" ? "active" : ""
+              active === "media" ? "activeBtn" : ""
             }`}
             id="media"
             onClick={(e) => setActive(e.target.id)}
@@ -129,7 +200,7 @@ export const ProfilePage = () => {
           </button>
           <button
             className={`py-6 px-10 opacity-70 hover:bg-white/10 transition duration-300 ${
-              active === "likes" ? "active" : ""
+              active === "likes" ? "activeBtn" : ""
             }`}
             id="likes"
             onClick={(e) => setActive(e.target.id)}
@@ -138,6 +209,64 @@ export const ProfilePage = () => {
           </button>
         </div>
       </div>
+      <Modal
+        title="Edit Profile"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={false}
+      >
+        <form onSubmit={handleSubmit}>
+          <img
+            src="https://static.vecteezy.com/system/resources/previews/019/896/008/original/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png"
+            alt="user image"
+            className="w-24 h-24 object-cover rounded-full cursor-pointer mx-auto"
+          />
+          <form className="flex flex-col gap-4 my-4">
+            <input
+              type="text"
+              id="username"
+              placeholder="Username..."
+              defaultValue={currentUser.username}
+              className="border p-3 outline-none rounded-lg"
+              autoComplete="off"
+              onChange={(e) => handleChange(e)}
+            />
+            <input
+              type="email"
+              id="email"
+              placeholder="Email..."
+              defaultValue={currentUser.email}
+              className="border p-3 outline-none rounded-lg"
+              autoComplete="off"
+              onChange={(e) => handleChange(e)}
+            />
+            <input
+              type="password"
+              id="password"
+              placeholder="Password..."
+              className="border p-3 outline-none rounded-lg"
+              autoComplete="off"
+              onChange={(e) => handleChange(e)}
+            />
+          </form>
+          <Button
+            htmlType="submit"
+            type="primary"
+            className="bg-blue-600 w-full my-2"
+          >
+            {loading ? "Editing..." : "Edit"}
+          </Button>
+          <Button
+            htmlType="button"
+            className="bg-red-600 w-full mt-2"
+            onClick={handleDeleteUser}
+          >
+            Delete
+          </Button>
+          <p className="text-red-700">{error && error}</p>
+        </form>
+      </Modal>
     </div>
   );
 };

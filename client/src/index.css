@@ -7,6 +7,11 @@ body {
   color: white;
 }
 
-.active {
+.activeBtn {
   @apply shadow-lg shadow-inherit opacity-100 border-b border-blue-400;
+}
+
+.ant-modal-content {
+  display: block;
+  background-color: black;
 }
