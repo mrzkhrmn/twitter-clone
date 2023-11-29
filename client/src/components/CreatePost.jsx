@@ -10,7 +10,7 @@ export const CreatePost = () => {
       <div>
         <img
           className="w-12 rounded-full object-cover"
-          src={currentUser.profileImage}
+          src={currentUser?.profileImage}
           alt="profile ia-mage"
         />
       </div>

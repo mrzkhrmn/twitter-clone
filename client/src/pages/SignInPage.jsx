@@ -47,7 +47,7 @@ export const SignInPage = () => {
         <h1 className="text-4xl text-blue-600">
           Twitter <span className="text-white">Clone</span>
         </h1>
-        <h1 className="text-3xl text-slate-300">Sign In</h1>
+        <h1 className="text-3xl">Sign In</h1>
         <img
           src="https://static.vecteezy.com/system/resources/previews/019/896/008/original/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png"
           alt="user image"

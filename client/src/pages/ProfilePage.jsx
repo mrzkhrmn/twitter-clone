@@ -1,26 +1,51 @@
-import { useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Modal, Button } from "antd";
 import { FaArrowLeft, FaCalendar } from "react-icons/fa";
+import { MdLogout } from "react-icons/md";
 import {
   deleteUserFailure,
   deleteUserStart,
   deleteUserSuccess,
+  signInSuccess,
+  signOutUserFailure,
+  signOutUserStart,
   updateUserFailure,
   updateUserStart,
   updateUserSuccess,
 } from "../redux/user/userSlice";
 import { message } from "antd";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../../firebase";
+
+// firebase storage
+// allow read; allow write: if request.resource.size < 2 * 1024* 1024 && request.resource.contentType.matches("image/.*");
 
 export const ProfilePage = () => {
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const [modalData, setModalData] = useState({});
+  const [file, setFile] = useState(undefined);
+  const [filePerc, setFilePerc] = useState(0);
+  const [fileUploadError, setFileUploadError] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [active, setActive] = useState("posts");
-  const dispatch = useDispatch();
 
+  const fileRef = useRef(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const date = new Date(currentUser.createdAt);
+
+  useEffect(() => {
+    if (file) {
+      handleFileUpload(file);
+    }
+  }, [file]);
 
   const getMonthToString = (month) => {
     switch (month) {
@@ -109,19 +134,68 @@ export const ProfilePage = () => {
     }
   }
 
+  async function handleSignOut() {
+    try {
+      dispatch(signOutUserStart());
+      const res = await fetch("/api/auth/signOut");
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(signOutUserFailure(data.message));
+        return;
+      }
+      dispatch(signInSuccess(data));
+      navigate("/sign-in");
+    } catch (error) {
+      dispatch(signOutUserFailure(error.message));
+    }
+  }
+
+  function handleFileUpload(file) {
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + file.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setFilePerc(Math.round(progress));
+      },
+      (error) => {
+        setFileUploadError(true);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
+          setModalData({ ...modalData, profileImage: downloadURL })
+        );
+      }
+    );
+  }
+
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="flex border-x border-dark-gray gap-4">
-        <Link
-          to={"/"}
-          className="flex items-center p-3 text-lg text-slate-300  hover:bg-white/5 "
-        >
-          <FaArrowLeft />
-        </Link>
-        <div>
-          <h1 className="text-lg font-bold">{currentUser.username}</h1>
-          <span className="text-gray-400 text-sm">2 Posts</span>
+      <div className="flex border-x border-dark-gray gap-4 justify-between items-center">
+        <div className="flex">
+          {" "}
+          <Link
+            to={"/"}
+            className="flex items-center p-3 text-lg hover:bg-white/10 "
+          >
+            <FaArrowLeft />
+          </Link>
+          <div>
+            <h1 className="text-lg font-bold">{currentUser.username}</h1>
+            <span className="text-gray-400 text-sm">2 Posts</span>
+          </div>
         </div>
+        <button
+          className="text-white text-2xl p-3  hover:bg-white/10"
+          onClick={handleSignOut}
+        >
+          <MdLogout />
+        </button>
       </div>
       <div className="bg-dark-gray w-100 h-60"></div>
       <div className="border-x border-b border-dark-gray">
@@ -217,12 +291,35 @@ export const ProfilePage = () => {
         footer={false}
       >
         <form onSubmit={handleSubmit}>
-          <img
-            src="https://static.vecteezy.com/system/resources/previews/019/896/008/original/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png"
-            alt="user image"
-            className="w-24 h-24 object-cover rounded-full cursor-pointer mx-auto"
+          <input
+            onChange={(e) => setFile(e.target.files[0])}
+            type="file"
+            ref={fileRef}
+            accept="image/*"
+            hidden
           />
-          <form className="flex flex-col gap-4 my-4">
+          <img
+            onClick={() => fileRef.current.click()}
+            src={modalData.profileImage || currentUser.profileImage}
+            alt="profile image"
+            className="w-24 h-24 rounded-full cursor-pointer mx-auto hover:scale-105 hover:grayscale-[50%] transition duration-300"
+          />
+          <p className="text-center">
+            {fileUploadError ? (
+              <span className="text-red-700 font-bold">
+                Error Image Upload (image must be less than 2 mb)
+              </span>
+            ) : filePerc > 0 && filePerc < 100 ? (
+              <span className="text-slate-700">{`Uploading ${filePerc}%`}</span>
+            ) : filePerc === 100 ? (
+              <span className="text-green-700 font-bold">
+                Image successfully uploaded!
+              </span>
+            ) : (
+              ""
+            )}
+          </p>
+          <div className="flex flex-col gap-4 my-4">
             <input
               type="text"
               id="username"
@@ -249,7 +346,7 @@ export const ProfilePage = () => {
               autoComplete="off"
               onChange={(e) => handleChange(e)}
             />
-          </form>
+          </div>
           <Button
             htmlType="submit"
             type="primary"
@@ -259,7 +356,8 @@ export const ProfilePage = () => {
           </Button>
           <Button
             htmlType="button"
-            className="bg-red-600 w-full mt-2"
+            type="danger"
+            className="bg-red-600 w-full mt-2 text-white hover:opacity-80"
             onClick={handleDeleteUser}
           >
             Delete

@@ -42,7 +42,9 @@ export const SignUpPage = () => {
   return (
     <div className="max-w-lg mx-auto mt-10">
       <div className="flex flex-col items-center gap-4">
-        <h1 className="text-4xl text-blue-600">Twitter Clone</h1>
+        <h1 className="text-4xl">
+          <span className="text-blue-600">Twitter</span> Clone
+        </h1>
         <h1 className="text-3xl">Sign Up</h1>
       </div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 my-4">
