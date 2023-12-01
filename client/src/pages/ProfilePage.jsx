@@ -23,6 +23,8 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../../firebase";
+import { CreatePost } from "../components/CreatePost";
+import { Post } from "../components/Post";
 
 // firebase storage
 // allow read; allow write: if request.resource.size < 2 * 1024* 1024 && request.resource.contentType.matches("image/.*");
@@ -365,6 +367,9 @@ export const ProfilePage = () => {
           <p className="text-red-700">{error && error}</p>
         </form>
       </Modal>
+      <div className="border border-dark-gray">
+        <Post />
+      </div>
     </div>
   );
 };

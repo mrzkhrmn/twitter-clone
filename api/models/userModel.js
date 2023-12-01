@@ -9,13 +9,9 @@ const userSchema = mongoose.Schema(
       default:
         "https://static.vecteezy.com/system/resources/previews/019/896/008/original/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png",
     },
-    posts: [
-      {
-        id: { type: mongoose.Schema.Types.ObjectId, ref: "Post" },
-        description: { type: mongoose.Schema.Types.String, ref: "Post" },
-        imageUrl: { type: mongoose.Schema.Types.String, ref: "Post" },
-      },
-    ],
+    followers: { type: Array, default: [] },
+    following: { type: Array, default: [] },
+    description: { type: String },
   },
   { timestamps: true }
 );

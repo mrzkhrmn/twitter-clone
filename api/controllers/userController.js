@@ -1,19 +1,6 @@
-import Post from "../models/postModel.js";
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import { errorHandler } from "../utils/error.js";
-
-export const createPost = async (req, res, next) => {
-  try {
-    const post = new Post(req.body);
-    const user = await User.findById(req.body.id);
-    user.posts.push(post);
-    user.save();
-    return res.status(201).json(user);
-  } catch (error) {
-    next(error);
-  }
-};
 
 export const getUser = async (req, res, next) => {
   try {

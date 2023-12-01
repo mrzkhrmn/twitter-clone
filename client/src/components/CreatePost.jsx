@@ -1,10 +1,20 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { FaImage } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
 export const CreatePost = () => {
   const { currentUser } = useSelector((state) => state.user);
+  const [formData, setFormData] = useState({});
   const fileRef = useRef(null);
+
+  function handleChange(e) {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+  }
+
   return (
     <div className="flex justify-center gap-4 mt-8">
       <div>
@@ -14,14 +24,15 @@ export const CreatePost = () => {
           alt="profile ia-mage"
         />
       </div>
-      <form className="flex flex-col">
+      <form onSubmit={handleSubmit} className="flex flex-col">
         <textarea
           className=" text-lg bg-transparent focus:outline-none p-3 rounded-md border-b border-gray-600 focus:placeholder-gray-300"
           placeholder="What is happening?!"
-          name="post"
-          id="post"
+          name="description"
+          id="description"
           cols="100"
           rows="5"
+          onChange={(e) => handleChange(e)}
         ></textarea>
         <div className="flex justify-between p-2">
           <input type="file" accept="image/*" ref={fileRef} hidden />
