@@ -23,7 +23,6 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../../firebase";
-import { CreatePost } from "../components/CreatePost";
 import { Post } from "../components/Post";
 
 // firebase storage
@@ -38,6 +37,8 @@ export const ProfilePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [active, setActive] = useState("posts");
 
+  const [userTweets, setUserTweets] = useState([]);
+
   const fileRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -48,6 +49,15 @@ export const ProfilePage = () => {
       handleFileUpload(file);
     }
   }, [file]);
+
+  useEffect(() => {
+    async function fetchUserTweets() {
+      const res = await fetch(`/api/tweets/get-user/${currentUser._id}`);
+      const data = await res.json();
+      setUserTweets(data);
+    }
+    fetchUserTweets();
+  }, [currentUser._id]);
 
   const getMonthToString = (month) => {
     switch (month) {
@@ -165,7 +175,7 @@ export const ProfilePage = () => {
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setFilePerc(Math.round(progress));
       },
-      (error) => {
+      () => {
         setFileUploadError(true);
       },
       () => {
@@ -189,7 +199,9 @@ export const ProfilePage = () => {
           </Link>
           <div>
             <h1 className="text-lg font-bold">{currentUser.username}</h1>
-            <span className="text-gray-400 text-sm">2 Posts</span>
+            <span className="text-gray-400 text-sm">
+              {userTweets.length} Posts
+            </span>
           </div>
         </div>
         <button
@@ -227,11 +239,15 @@ export const ProfilePage = () => {
             </p>
             <div className="flex gap-3 mt-2">
               <p>
-                <span className="text-slate-200">22</span>{" "}
+                <span className="text-slate-200">
+                  {currentUser.followers.length}
+                </span>{" "}
                 <span className="opacity-50">Following</span>
               </p>
               <p>
-                <span className="text-slate-200">0</span>{" "}
+                <span className="text-slate-200">
+                  {currentUser.followers.length}
+                </span>{" "}
                 <span className="opacity-50">Followers</span>
               </p>
             </div>
@@ -369,6 +385,9 @@ export const ProfilePage = () => {
       </Modal>
       <div className="border border-dark-gray">
         <Post />
+        {userTweets.map((tweet) => (
+          <p key={tweet._id}>{tweet.description}</p>
+        ))}
       </div>
     </div>
   );

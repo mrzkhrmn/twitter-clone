@@ -1,3 +1,4 @@
+import { message } from "antd";
 import { useRef, useState } from "react";
 import { FaImage } from "react-icons/fa";
 import { useSelector } from "react-redux";
@@ -10,9 +11,28 @@ export const CreatePost = () => {
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   }
+  function handleResetForm() {
+    setFormData({});
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
+    console.log("workkk");
+    try {
+      const res = await fetch(`/api/tweets/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: currentUser._id, ...formData }),
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        console.log(data.message);
+      }
+      message.success("Tweet created!");
+      handleResetForm();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
