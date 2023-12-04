@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Modal, Button } from "antd";
 import { FaArrowLeft, FaCalendar } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
@@ -39,6 +39,7 @@ export const ProfilePage = () => {
 
   const [userTweets, setUserTweets] = useState([]);
 
+  const params = useParams();
   const fileRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -384,9 +385,8 @@ export const ProfilePage = () => {
         </form>
       </Modal>
       <div className="border border-dark-gray">
-        <Post />
         {userTweets.map((tweet) => (
-          <p key={tweet._id}>{tweet.description}</p>
+          <Post key={tweet._id} tweet={tweet} />
         ))}
       </div>
     </div>

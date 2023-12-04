@@ -12,7 +12,7 @@ export const CreatePost = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   }
   function handleResetForm() {
-    setFormData({});
+    setFormData({ formData: {} });
   }
 
   async function handleSubmit(e) {
@@ -28,8 +28,8 @@ export const CreatePost = () => {
       if (data.success === false) {
         console.log(data.message);
       }
-      message.success("Tweet created!");
       handleResetForm();
+      message.success("Tweet created!");
     } catch (error) {
       console.log(error);
     }
@@ -52,6 +52,7 @@ export const CreatePost = () => {
           id="description"
           cols="100"
           rows="5"
+          maxLength={200}
           onChange={(e) => handleChange(e)}
         ></textarea>
         <div className="flex justify-between p-2">

@@ -28,7 +28,10 @@ export const Header = () => {
           <NavLink to={"/about"} className="flex items-center gap-1">
             <FaPen /> <span>About</span>
           </NavLink>
-          <NavLink to={"/profile"} className="flex items-center gap-1">
+          <NavLink
+            to={"/profile/" + currentUser._id}
+            className="flex items-center gap-1"
+          >
             <FaUser />{" "}
             <span>{currentUser ? currentUser.username : "Profile"}</span>
           </NavLink>
