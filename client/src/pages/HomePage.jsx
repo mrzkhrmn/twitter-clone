@@ -24,14 +24,14 @@ export const HomePage = () => {
       ) : (
         <>
           <Header />
-          <div className="max-w-6xl mx-auto">
-            <CreatePost />
-          </div>
-          <div className="border-b border-dark-gray p-3">
-            <div className="flex flex-col flex-1">
-              {tweets.map((tweet) => (
-                <Post key={tweet._id} tweet={tweet} setTweets={setTweets} />
-              ))}
+          <div className="max-w-4xl mx-auto">
+            <CreatePost setTweets={setTweets} />
+            <div className="border-b border-dark-gray p-3">
+              <div className="flex flex-col flex-1">
+                {tweets.map((tweet) => (
+                  <Post key={tweet._id} tweet={tweet} setTweets={setTweets} />
+                ))}
+              </div>
             </div>
           </div>
         </>

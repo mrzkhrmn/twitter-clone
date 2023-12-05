@@ -1,7 +1,9 @@
-import { MdFavoriteBorder, MdOutlineFavorite } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { MdFavoriteBorder, MdOutlineFavorite } from "react-icons/md";
+import { FaRegTrashAlt } from "react-icons/fa";
+import { message } from "antd";
 
 export const Post = ({ tweet, setTweets }) => {
   const { currentUser } = useSelector((state) => state.user);
@@ -72,29 +74,64 @@ export const Post = ({ tweet, setTweets }) => {
     }
   }
 
+  async function handleDelete(e) {
+    e.preventDefault();
+    try {
+      await fetch(`/api/tweets/delete/${tweet._id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: currentUser._id }),
+      });
+      const newData = await fetch(`/api/tweets/get-all/${currentUser._id}`, {
+        method: "GET",
+      });
+      const data = await newData.json();
+      setTweets(data);
+      message.success("Tweet has been deleted!");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
-    <div className="flex  gap-4 border-b border-dark-gray p-3">
-      <Link to={"/profile/" + userData._id}>
-        <img className="w-14" src={userData.profileImage} alt="profileImage" />
-      </Link>
-      <div className="flex flex-col flex-1">
-        <p className="font-semibold">
-          {userData.username} -{" "}
-          <span className="opacity-40">
-            {getMonthToString(date.getMonth())} {Number(postCreateDate) + 1}
-          </span>
-        </p>
-        <p className="my-2">{tweet.description}</p>
-        <div className="flex items-center gap-1">
-          <button type="button" onClick={handleLike} className=" text-xl">
-            {tweet.likes.includes(currentUser._id) ? (
-              <MdOutlineFavorite />
-            ) : (
-              <MdFavoriteBorder />
-            )}
-          </button>
-          <span className="opacity-50">{tweet.likes.length}</span>
+    <div className="flex justify-between  gap-4 border-b border-dark-gray p-3">
+      <div className="flex gap-2">
+        <Link to={"/profile/" + userData._id}>
+          <img
+            className="w-14"
+            src={userData.profileImage}
+            alt="profileImage"
+          />
+        </Link>
+        <div>
+          <div className="flex flex-col flex-1">
+            <p className="font-semibold">
+              {userData.username} -{" "}
+              <span className="opacity-40">
+                {getMonthToString(date.getMonth())} {Number(postCreateDate) + 1}
+              </span>
+            </p>
+            <p className="my-2">{tweet.description}</p>
+            <div className="flex items-center gap-1">
+              <button type="button" onClick={handleLike} className=" text-xl">
+                {tweet.likes.includes(currentUser._id) ? (
+                  <MdOutlineFavorite />
+                ) : (
+                  <MdFavoriteBorder />
+                )}
+              </button>
+              <span className="opacity-50">{tweet.likes.length}</span>
+            </div>
+          </div>
         </div>
+      </div>
+      <div>
+        <button
+          onClick={handleDelete}
+          className="text-lg text-red-700 p-1 rounded-full hover:bg-white/10"
+        >
+          {tweet.userId === currentUser._id && <FaRegTrashAlt />}
+        </button>
       </div>
     </div>
   );

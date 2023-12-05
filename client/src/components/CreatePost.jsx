@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { FaImage } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
-export const CreatePost = () => {
+export const CreatePost = ({ setTweets }) => {
   const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({});
   const fileRef = useRef(null);
@@ -28,6 +28,9 @@ export const CreatePost = () => {
       if (data.success === false) {
         console.log(data.message);
       }
+      const tweets = await fetch("/api/tweets/get-all/" + currentUser._id);
+      const tweetsData = await tweets.json();
+      setTweets(tweetsData);
       handleResetForm();
       message.success("Tweet created!");
     } catch (error) {
@@ -36,12 +39,12 @@ export const CreatePost = () => {
   }
 
   return (
-    <div className="flex justify-center gap-4 mt-8">
-      <div>
+    <div className="flex  justify-center gap-4 mt-8">
+      <div className="">
         <img
-          className="w-12 rounded-full object-cover"
+          className="w-12 rounded-full object-cover flex flex-1"
           src={currentUser?.profileImage}
-          alt="profile ia-mage"
+          alt="profile image"
         />
       </div>
       <form onSubmit={handleSubmit} className="flex flex-col">
