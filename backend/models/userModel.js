@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 
 const userSchema = mongoose.Schema(
   {
@@ -24,6 +24,13 @@ const userSchema = mongoose.Schema(
     coverImg: { type: String, default: "" },
     bio: { type: String, default: "" },
     link: { type: String, default: "" },
+    likedPosts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+        default: [],
+      },
+    ],
   },
   { timestamps: true }
 );

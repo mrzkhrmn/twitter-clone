@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import authRouter from "./routes/authRotes.js";
 import userRouter from "./routes/userRoutes.js";
+import postRouter from "./routes/postRoutes.js";
 import { connectDatabase } from "./db/connectDatabase.js";
 import cookieParser from "cookie-parser";
 import { v2 as cloudinary } from "cloudinary";
@@ -22,6 +23,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
+app.use("/api/post", postRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`server is running on port: ${process.env.PORT}`);
