@@ -4,17 +4,36 @@ import { FaUser } from "react-icons/fa";
 import XSvg from "../components/svgs/X";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useLoginMutation } from "../features/api/authApiSlice";
+import { useDispatch } from "react-redux";
+import {
+  loginFailure,
+  loginStart,
+  loginSuccess,
+} from "../features/user/userSlice";
 
 export const LoginPage = () => {
   const [formData, setFormData] = useState({});
+  const [login, { isError, isLoading, error }] = useLoginMutation();
 
-  const isError = false;
+  const dispatch = useDispatch();
+
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
+    dispatch(loginStart());
+    try {
+      const res = await login(formData);
+      if (isError)
+        throw new Error(error?.data || "Something went wrong while logging in");
+      dispatch(loginSuccess(res));
+    } catch (err) {
+      console.log(err.message);
+      dispatch(loginFailure(err.message));
+    }
   }
 
   return (
@@ -51,7 +70,7 @@ export const LoginPage = () => {
             />
           </label>
           <button className="btn btn-primary text-white rounded-full mt-8">
-            Login
+            {isLoading ? "Logging in..." : "Login"}
           </button>
           {isError && <p className="text-red-500">Something went wrong</p>}
         </form>

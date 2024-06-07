@@ -6,19 +6,32 @@ import {
 import { FaUser } from "react-icons/fa";
 
 import XSvg from "../components/svgs/X";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useSignupMutation } from "../features/api/authApiSlice";
+import toast from "react-hot-toast";
 
 export const SignupPage = () => {
   const [formData, setFormData] = useState({});
+  const [signup, { isLoading, isError, error }] = useSignupMutation();
 
-  const isError = false;
+  const navigate = useNavigate();
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
+    try {
+      await signup(formData).unwrap();
+      if (isError)
+        throw new Error(error?.data || "Something went wrong while signing up");
+      toast.success("User created successfully!");
+      navigate("/login");
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.message);
+    }
   }
 
   return (
@@ -74,10 +87,13 @@ export const SignupPage = () => {
               onChange={handleChange}
             />
           </label>
-          <button className="btn btn-primary text-white rounded-full mt-8">
-            Sign Up
+          <button
+            className="btn btn-primary text-white rounded-full mt-8"
+            disabled={isLoading}
+          >
+            {isLoading ? "Signing Up..." : "Sign Up"}
           </button>
-          {isError && <p className="text-red-500">Something went wrong</p>}
+          {isError && <p className="text-red-500">{isError.message}</p>}
         </form>
         <div className="flex flex-col lg:w-2/3 gap-2 mt-4">
           <p className="text-white font-thin text-center">
